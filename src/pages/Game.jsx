@@ -3,6 +3,7 @@ import Board from "../components/Board";
 import Recent from "../components/Recent";
 import Footer from "../components/Footer";
 import Undo from "../assets/undo-btn.png";
+import Reset from "../assets/reset-btn.png";
 
 const Game = () => {
   const [pickedNumbers, setPickedNumbers] = useState([]);
@@ -17,7 +18,6 @@ const Game = () => {
     const savedLastNumber = localStorage.getItem("lastNumber");
     const savedCurrentNumber = localStorage.getItem("currentNumber");
 
-    // Only set state if localStorage contains previously saved numbers
     if (savedPickedNumbers && savedPickedNumbers.length > 0) {
       setPickedNumbers(savedPickedNumbers);
       setLastNumber(savedLastNumber ? Number(savedLastNumber) : null);
@@ -43,7 +43,7 @@ const Game = () => {
   const handleUndo = () => {
     if (pickedNumbers.length > 0) {
       const updatedPickedNumbers = [...pickedNumbers];
-      const lastPickedNumber = updatedPickedNumbers.pop();
+      updatedPickedNumbers.pop();
 
       setPickedNumbers(updatedPickedNumbers);
       setCurrentNumber(lastNumber);
@@ -53,16 +53,33 @@ const Game = () => {
     }
   };
 
+  const handleReset = () => {
+    if (window.confirm("Are you sure you want to reset the game?")) {
+      setPickedNumbers([]);
+      setLastNumber(null);
+      setCurrentNumber(null);
+      localStorage.removeItem("pickedNumbers");
+      localStorage.removeItem("lastNumber");
+      localStorage.removeItem("currentNumber");
+    }
+  };
+
   return (
-    <div className="relative">
+    <div className="relative h-full flex flex-col justify-center">
       <Board pickedNumbers={pickedNumbers} onNumberClick={handleNumberClick} />
       <Recent lastNumber={lastNumber} currentNumber={currentNumber} />
-      <div className="w-[5%] z-10 relative">
+      <div className="w-[100%] flex justify-between px-8 z-10 relative">
         <button
           onClick={handleUndo}
           className="p-2 border border-[#E3C041] rounded-lg text-[#E3C041]"
         >
           <img src={Undo} alt="undo" height={25} width={25} />
+        </button>
+        <button
+          onClick={handleReset}
+          className="p-2 border border-[#E3C041] rounded-lg text-[#E3C041]"
+        >
+          <img src={Reset} alt="reset" height={25} width={25} />
         </button>
       </div>
       <div className="absolute w-full bottom-4">
